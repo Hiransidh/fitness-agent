@@ -1,35 +1,43 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from "react";
+import axios from "axios";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [goal, setGoal] = useState("");
+  const [plan, setPlan] = useState("");
+
+  const getPlan = async () => {
+    try {
+      const res = await axios.get("http://127.0.0.1:8000/plan", {
+        params: { goal },
+      });
+      setPlan(res.data.plan);
+    } catch (err) {
+      console.error(err);
+      setPlan("Error fetching plan");
+    }
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <div style={{ padding: "30px", fontFamily: "Arial" }}>
+      <h2>Fitness & Diet Recommender</h2>
+      <input
+        type="text"
+        placeholder="Enter your goal (e.g. muscle, weight loss)"
+        value={goal}
+        onChange={(e) => setGoal(e.target.value)}
+        style={{ padding: "8px", marginRight: "10px" }}
+      />
+      <button onClick={getPlan} style={{ padding: "8px 16px" }}>
+        Get Plan
+      </button>
+
+      {plan && (
+        <div style={{ marginTop: "20px", fontWeight: "bold" }}>
+          {plan}
+        </div>
+      )}
+    </div>
+  );
 }
 
-export default App
+export default App;
